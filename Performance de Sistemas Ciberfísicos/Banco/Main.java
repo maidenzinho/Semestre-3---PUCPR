@@ -35,7 +35,7 @@ class DepositaThread extends Thread{
     public void run(){
         this.banco.deposito(valor);
         try {
-            Thread.sleep(100); // Simula um pequeno atraso para demonstrar concorrência
+            Thread.sleep(100);
         } catch (InterruptedException e) {
             System.out.println("Thread interrompida: " + e.getMessage());
         }
@@ -55,7 +55,7 @@ class SaqueThread extends Thread{
     public void run(){
         this.banco.saque(valor);
         try {
-            Thread.sleep(100); // Simula um pequeno atraso para demonstrar concorrência
+            Thread.sleep(100);
         } catch (InterruptedException e) {
             System.out.println("Thread interrompida: " + e.getMessage());
         }
@@ -67,7 +67,7 @@ public class Main {
     public static void main(String[] args) throws InterruptedException {
         Random random = new Random();
         
-        double valorDeposito = random.nextDouble() * 1000; // valor entre 0 e 1000
+        double valorDeposito = random.nextDouble() * 1000;
         double valorSaque = random.nextDouble() * 1000;
 
         Banco banco = new Banco();
