@@ -1,5 +1,6 @@
 
 import java.util.ArrayList;
+import java.util.Random;
 
 class Consumidor extends Thread{
     private ArrayList<Integer> lista;
@@ -9,19 +10,26 @@ class Consumidor extends Thread{
         this.lista = lista;
     }
     public void run(){
-        synchronized (this.lista){
-            System.out.println("Começo Consumidor");
+        Random random = new Random();
+        while (true){
+            int dado = random.nextInt(1000);
+            synchronized (this.lista) {
+                while (this.lista.size() <= 5){
+                    try {
+                        this.lista.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                this.lista.add(dado);
+                this.lista.notifyAll();
+                System.out.println("Consumidor " + this.id + " " + this.lista);
+            }
             try {
-                this.lista.wait();
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            System.out.println("Final Consumidor");
         }
     }
 }
@@ -34,31 +42,31 @@ class Produtor extends Thread{
         this.lista = lista;
     }
     public void run(){
-        synchronized (this.lista){
-            System.out.println("Começo Produtor");
-                this.lista.notify();
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+        Random random = new Random();
+        while (true){
+            int dado = random.nextInt(1000);
+            synchronized (this.lista) {
+                while (this.lista.size() >= 5){
+                    try {
+                        this.lista.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                this.lista.add(dado);
+                this.lista.notifyAll();
+                System.out.println("Produtor " + this.id + " " + this.lista);
             }
-            System.out.println("Final Produtor");
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
 
 class Main{
     public static void main(String[] args) {
-        ArrayList<Integer> lista = new ArrayList<>();
-        Consumidor consumidor = new Consumidor(1, lista);
-        Produtor produtor = new Produtor(1, lista);
-
-        consumidor.start();
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        produtor.start();
     }
 }
